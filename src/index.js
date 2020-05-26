@@ -3,7 +3,7 @@ const leftMenu = document.querySelector('.left-menu'),
       modal = document.querySelector('.modal'),
       tvShowsList = document.querySelector('.tv-shows__list');
 
-const DBService = class {
+class DBService {
   getData = async (url) => {
     const response = await fetch(url);
     if (response.ok) {
@@ -18,13 +18,33 @@ const DBService = class {
   }
 }
 
-const renderCard = response => {
+const renderCard = (response) => {
   console.log(response);
+
+  response.results.forEach(item => {
+    const card = document.createElement('li');
+    card.classList.add('tv-shows__item');
+
+    card.innerHTML = `
+        <li class="tv-shows__item">
+            <a href="#" class="tv-card">
+                <span class="tv-card__vote">8.1</span>
+                <img class="tv-card__img"
+                      src="https://image.tmdb.org/t/p/w185_and_h278_bestv2/o9XEd15zRzef9SlOuJYPdS5HCdK.jpg"
+                      data-backdrop="https://image.tmdb.org/t/p/w185_and_h278_bestv2/lXWgVQ1whAEMz4Ju88UyPoveIKD.jpg"
+                      alt="Звёздные войны: Войны клонов">
+                <h4 class="tv-card__head">Звёздные войны: Войны клонов</h4>
+            </a>
+        </li>`;
+
+    tvShowsList.append(card); // новый метод вместо apendChild, вставляет в конец tvShowsList
+  })
 }
 
 new DBService().getTestData()
   .then(renderCard);
 
+// Открытие меню по кнопке
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
   hamburger.classList.toggle('open');
@@ -75,10 +95,10 @@ modal.addEventListener('click', (event) => {
 
 // Функция для изменения картинок при наведении на карточки
 const changeImage = (event) => {
-  const card = event.target.closest('.tv-shows__item');
+  const imagesCard = event.target.closest('.tv-shows__item');
   // matches возвращает true/false (проверка на класс таргета)
-  if (card) {
-    const img = card.querySelector('.tv-card__img');
+  if (imagesCard) {
+    const img = imagesCard.querySelector('.tv-card__img');
 
     if (img.dataset.backdrop) {
       [img.src, img.dataset.backdrop] = [img.dataset.backdrop, img.src];
