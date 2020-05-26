@@ -43,6 +43,7 @@ tvShowsList.addEventListener('click', (event) => {
 
 // Close modal
 modal.addEventListener('click', (event) => {
+  // Проверка клика на кнопку или в любую точку сайта (не в модал)
   if (event.target.closest('.cross') || event.target.classList.contains('modal')) {
     document.body.style.overflow = '';
     modal.classList.add('hide');
