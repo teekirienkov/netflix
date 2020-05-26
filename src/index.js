@@ -1,7 +1,11 @@
 const leftMenu = document.querySelector('.left-menu'),
       hamburger = document.querySelector('.hamburger'),
       modal = document.querySelector('.modal'),
-      tvShowsList = document.querySelector('.tv-shows__list');
+      tvShowsList = document.querySelector('.tv-shows__list'),
+
+      API_KEY = '9c464a059d368b1b6fa45ea91caad68b',
+
+      IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
 
 class DBService {
   getData = async (url) => {
@@ -21,19 +25,28 @@ class DBService {
 const renderCard = (response) => {
   console.log(response);
 
+  tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
+
   response.results.forEach(item => {
+    const {backdrop_path, name: title, poster_path, vote_average} = item;
+
+    // переменные с проверкой на наличие постера, бэкдропа и рейтинга
+    const posterIMG = poster_path ? IMG_URL + poster_path : './img/no-poster.jpg',
+          backdropIMG = '',
+          voteElem = '';
+
     const card = document.createElement('li');
     card.classList.add('tv-shows__item');
 
     card.innerHTML = `
         <li class="tv-shows__item">
             <a href="#" class="tv-card">
-                <span class="tv-card__vote">8.1</span>
+                <span class="tv-card__vote">${vote_average}</span>
                 <img class="tv-card__img"
-                      src="https://image.tmdb.org/t/p/w185_and_h278_bestv2/o9XEd15zRzef9SlOuJYPdS5HCdK.jpg"
-                      data-backdrop="https://image.tmdb.org/t/p/w185_and_h278_bestv2/lXWgVQ1whAEMz4Ju88UyPoveIKD.jpg"
-                      alt="Звёздные войны: Войны клонов">
-                <h4 class="tv-card__head">Звёздные войны: Войны клонов</h4>
+                      src="${posterIMG}"
+                      data-backdrop="${IMG_URL + backdrop_path}"
+                      alt="${title}">
+                <h4 class="tv-card__head">${title}</h4>
             </a>
         </li>`;
 
