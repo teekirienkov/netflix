@@ -1,5 +1,7 @@
 const leftMenu = document.querySelector('.left-menu'),
-      hamburger = document.querySelector('.hamburger');
+      hamburger = document.querySelector('.hamburger'),
+      modal = document.querySelector('.modal'),
+      tvShowsList = document.querySelector('.tv-shows__list');
 
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
@@ -22,5 +24,27 @@ leftMenu.addEventListener('click', (event) => {
   // Добавляем класс active, который открывает выпадающий список
   if (dropdown) {
     dropdown.classList.toggle('active');
+
+    leftMenu.classList.add('openMenu');
+    hamburger.classList.add('open');
   }
 });
+
+// Open modal
+tvShowsList.addEventListener('click', (event) => {
+  const {target} = event;
+  const card = target.closest('.tv-card');
+
+  if (card) {
+    document.body.style.overflow = 'hidden';
+    modal.classList.remove('hide');
+  }
+});
+
+// Close modal
+modal.addEventListener('click', (event) => {
+  if (event.target.closest('.cross') || event.target.classList.contains('modal')) {
+    document.body.style.overflow = '';
+    modal.classList.add('hide');
+  }
+})
