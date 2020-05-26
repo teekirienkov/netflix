@@ -3,6 +3,21 @@ const leftMenu = document.querySelector('.left-menu'),
       modal = document.querySelector('.modal'),
       tvShowsList = document.querySelector('.tv-shows__list');
 
+const DBService = class {
+  getData = async (url) => {
+    const res = await fetch(url);
+    if (res.ok) {
+      console.log(res.json());
+    }
+  }
+
+  getTestData = () => {
+    return this.getData('../test.json')
+  }
+}
+
+new DBService().getTestData();
+
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
   hamburger.classList.toggle('open');
