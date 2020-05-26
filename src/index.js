@@ -5,18 +5,23 @@ const leftMenu = document.querySelector('.left-menu'),
 
 const DBService = class {
   getData = async (url) => {
-    const res = await fetch(url);
-    if (res.ok) {
-      console.log(res.json());
+    const response = await fetch(url);
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error(`Error: ${response.status}`)
     }
   }
 
-  getTestData = () => {
-    return this.getData('../test.json')
+  getTestData = async () => {
+    return await this.getData('../test.json')
   }
 }
 
-new DBService().getTestData();
+new DBService().getTestData()
+  .then((data) => {
+    console.log(data);
+});
 
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
