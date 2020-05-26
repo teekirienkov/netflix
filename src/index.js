@@ -18,10 +18,12 @@ const DBService = class {
   }
 }
 
+const renderCard = response => {
+  console.log(response);
+}
+
 new DBService().getTestData()
-  .then((data) => {
-    console.log(data);
-});
+  .then(renderCard);
 
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
