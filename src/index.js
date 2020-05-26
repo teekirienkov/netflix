@@ -17,6 +17,7 @@ document.addEventListener('click', (event) => {
   }
 });
 
+// Открываем выпадающий список в левом меню
 leftMenu.addEventListener('click', (event) => {
   const {target} = event;
   const dropdown = target.closest('.dropdown');
@@ -48,4 +49,20 @@ modal.addEventListener('click', (event) => {
     document.body.style.overflow = '';
     modal.classList.add('hide');
   }
-})
+});
+
+// Функция для изменения картинок при наведении на карточки
+const changeImage = (event) => {
+  const card = event.target.closest('.tv-shows__item');
+  // matches возвращает true/false (проверка на класс таргета)
+  if (card) {
+    const img = card.querySelector('.tv-card__img');
+
+    if (img.dataset.backdrop) {
+      [img.src, img.dataset.backdrop] = [img.dataset.backdrop, img.src];
+    }
+  }
+};
+
+tvShowsList.addEventListener('mouseover', changeImage);
+tvShowsList.addEventListener('mouseout', changeImage);
