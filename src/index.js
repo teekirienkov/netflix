@@ -46,6 +46,10 @@ class DBService {
   getSearchResult = (query) => {
     return this.getData(`${this.SERVER}/search/tv?api_key=${this.API_KEY}&query=${query}&language=ru`) // ПОИСК
   }
+
+  getTVShow = (id) => {
+    return this.getData(`${this.SERVER}/tv/${id}?api_key=${this.API_KEY}&language=ru-RU`) // 
+  }
 }
 
 console.log(new DBService().getSearchResult('Папа'));
@@ -55,7 +59,7 @@ const renderCard = (response) => {
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
 
   response.results.forEach(item => {
-    const { backdrop_path, name: title, poster_path, vote_average } = item;
+    const { backdrop_path, name: title, poster_path, vote_average, id } = item;
 
     // переменные с проверкой на наличие постера, бэкдропа и рейтинга
     const posterIMG = poster_path ? IMG_URL + poster_path : './img/no-poster.jpg',
@@ -67,7 +71,7 @@ const renderCard = (response) => {
 
     card.innerHTML = `
         <li class="tv-shows__item">
-            <a href="#" class="tv-card">
+            <a href="#" class="tv-card" id="${id}">
                 ${voteElem}
                 <img class="tv-card__img"
                       src="${posterIMG}"
@@ -86,7 +90,7 @@ searchForm.addEventListener('submit', (event) => {
   tvShowsSection.append(loading);
   event.preventDefault();
 
-  const { value } = searchInput;
+  const value = searchInput.value.trim();
 
   new DBService().getSearchResult(value)
     .then(renderCard);
@@ -132,17 +136,19 @@ tvShowsList.addEventListener('click', (event) => {
 
   if (card) {
 
-    new DBService().getTestCard()
+    new DBService().getTVShow(card.id)
       .then(data => {
 
-        const { poster_path, name: title,  genres} = data;
+        const { poster_path, name: title,  genres, vote_average, overview, homepage} = data;
 
         tvCardImg.src = IMG_URL + poster_path;
         modalTitle.textContent = title; // без .textContent ошибка, поэтому тут обязательно
+
         genresList.innerHTML = genres.reduce((acc, item) => `${acc} <li>${item.name}</li>`, ''); // возвращаем жанры через метод
-        rating
-        description
-        modalLink
+        
+        rating.textContent = vote_average;
+        description.textContent = overview;
+        modalLink.href = homepage;
       })
       .then(() => {
         document.body.style.overflow = 'hidden';        // этот участок перенес, он был после первого then
