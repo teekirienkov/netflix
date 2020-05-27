@@ -23,17 +23,16 @@ class DBService {
 }
 
 const renderCard = (response) => {
-  console.log(response);
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
 
   response.results.forEach(item => {
-    const {backdrop_path, name: title, poster_path, vote_average} = item;
+    const { backdrop_path, name: title, poster_path, vote_average } = item;
 
     // переменные с проверкой на наличие постера, бэкдропа и рейтинга
     const posterIMG = poster_path ? IMG_URL + poster_path : './img/no-poster.jpg',
-          backdropIMG = '',
-          voteElem = vote_average ? <span class="tv-card__vote">${vote_average}</span> : '';
+          backdropIMG = backdrop_path ? IMG_URL + backdrop_path : '',
+          voteElem = vote_average ? `<span class="tv-card__vote">${vote_average}</span>` : '';
 
     const card = document.createElement('li');
     card.classList.add('tv-shows__item');
@@ -44,7 +43,7 @@ const renderCard = (response) => {
                 ${voteElem}
                 <img class="tv-card__img"
                       src="${posterIMG}"
-                      data-backdrop="${IMG_URL + backdrop_path}"
+                      data-backdrop="${backdropIMG}"
                       alt="${title}">
                 <h4 class="tv-card__head">${title}</h4>
             </a>
