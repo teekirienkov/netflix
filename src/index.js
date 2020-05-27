@@ -3,9 +3,21 @@ const leftMenu = document.querySelector('.left-menu'),
       modal = document.querySelector('.modal'),
       tvShowsList = document.querySelector('.tv-shows__list'),
 
+      tvShowsSection = document.querySelector('.tv-shows'),
+
+      tvCardImg = document.querySelector('.tv-card__img'),
+      modalTitle = document.querySelector('.modal__title'),
+      genresList = document.querySelector('.genres-list'),
+      rating = document.querySelector('.rating'),
+      description = document.querySelector('.description'),
+      modalLink = document.querySelector('.modal__link'),
+
       API_KEY = '9c464a059d368b1b6fa45ea91caad68b',
 
       IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
+
+const loading = document.createElement('div');
+loading.classList.add('loading');
 
 class DBService {
   getData = async (url) => {
@@ -17,8 +29,12 @@ class DBService {
     }
   }
 
-  getTestData = async () => {
-    return await this.getData('../test.json')
+  getTestData = () => {
+    return this.getData('../test.json')
+  }
+
+  getTestCard = () => {
+    return this.getData('../card.json')
   }
 }
 
@@ -49,13 +65,16 @@ const renderCard = (response) => {
             </a>
         </li>`;
 
+    loading.remove();
     tvShowsList.append(card); // новый метод вместо apendChild, вставляет в конец tvShowsList
   })
 }
 
-new DBService().getTestData()
-  .then(renderCard);
-
+{
+  tvShowsSection.append(loading);
+  new DBService().getTestData()
+    .then(renderCard);
+}
 // Открытие меню по кнопке
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
@@ -91,6 +110,20 @@ tvShowsList.addEventListener('click', (event) => {
   const card = target.closest('.tv-card');
 
   if (card) {
+
+    new DBService().getTestCard()
+      .then(data => {
+
+        const { poster_path, name,  genres} = data;
+
+        tvCardImg.src = IMG_URL + poster_path;
+        modalTitle.textContent = name; // без .textContent ошибка, поэтому тут обязательно
+        genresList.innerHTML = genres.reduce((acc, item) => `${acc} <li>${item.name}</li>`, ''); // возвращаем жанры через метод
+        rating
+        description
+        modalLink
+      })
+
     document.body.style.overflow = 'hidden';
     modal.classList.remove('hide');
   }
