@@ -33,7 +33,7 @@ const renderCard = (response) => {
     // переменные с проверкой на наличие постера, бэкдропа и рейтинга
     const posterIMG = poster_path ? IMG_URL + poster_path : './img/no-poster.jpg',
           backdropIMG = '',
-          voteElem = '';
+          voteElem = vote_average ? <span class="tv-card__vote">${vote_average}</span> : '';
 
     const card = document.createElement('li');
     card.classList.add('tv-shows__item');
@@ -41,7 +41,7 @@ const renderCard = (response) => {
     card.innerHTML = `
         <li class="tv-shows__item">
             <a href="#" class="tv-card">
-                <span class="tv-card__vote">${vote_average}</span>
+                ${voteElem}
                 <img class="tv-card__img"
                       src="${posterIMG}"
                       data-backdrop="${IMG_URL + backdrop_path}"
