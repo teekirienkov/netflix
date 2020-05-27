@@ -12,7 +12,8 @@ const leftMenu = document.querySelector('.left-menu'),
       description = document.querySelector('.description'),
       modalLink = document.querySelector('.modal__link'),
 
-      API_KEY = '9c464a059d368b1b6fa45ea91caad68b',
+      searchForm = document.querySelector('.search__form'),
+      searchInput = document.querySelector('.search__form-input'),
 
       IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
 
@@ -20,6 +21,11 @@ const loading = document.createElement('div');
 loading.classList.add('loading');
 
 class DBService {
+  constructor() {
+    this.API_KEY = '9c464a059d368b1b6fa45ea91caad68b';
+    this.SERVER = 'https://api.themoviedb.org/3';
+  }
+
   getData = async (url) => {
     const response = await fetch(url);
     if (response.ok) {
@@ -36,7 +42,13 @@ class DBService {
   getTestCard = () => {
     return this.getData('../card.json')
   }
+
+  getSearchResult = (query) => {
+    return this.getData(`${this.SERVER}/search/tv?api_key=${this.API_KEY}&query=${query}&language=ru`) // ПОИСК
+  }
 }
+
+console.log(new DBService().getSearchResult('Папа'));
 
 const renderCard = (response) => {
 
@@ -70,11 +82,20 @@ const renderCard = (response) => {
   })
 }
 
-{
+searchForm.addEventListener('submit', (event) => {
   tvShowsSection.append(loading);
-  new DBService().getTestData()
+  event.preventDefault();
+
+  const { value } = searchInput;
+
+  new DBService().getSearchResult(value)
     .then(renderCard);
-}
+
+  searchInput.value = ''; // очищает input поиска
+});
+
+
+
 // Открытие меню по кнопке
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
@@ -114,18 +135,19 @@ tvShowsList.addEventListener('click', (event) => {
     new DBService().getTestCard()
       .then(data => {
 
-        const { poster_path, name,  genres} = data;
+        const { poster_path, name: title,  genres} = data;
 
         tvCardImg.src = IMG_URL + poster_path;
-        modalTitle.textContent = name; // без .textContent ошибка, поэтому тут обязательно
+        modalTitle.textContent = title; // без .textContent ошибка, поэтому тут обязательно
         genresList.innerHTML = genres.reduce((acc, item) => `${acc} <li>${item.name}</li>`, ''); // возвращаем жанры через метод
         rating
         description
         modalLink
       })
-
-    document.body.style.overflow = 'hidden';
-    modal.classList.remove('hide');
+      .then(() => {
+        document.body.style.overflow = 'hidden';        // этот участок перенес, он был после первого then
+        modal.classList.remove('hide');
+      })
   }
 });
 
