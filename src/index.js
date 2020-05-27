@@ -117,6 +117,9 @@ document.addEventListener('click', (event) => {
 
 // Открываем выпадающий список в левом меню
 leftMenu.addEventListener('click', (event) => {
+
+  event.preventDefault();
+  
   const {target} = event;
   const dropdown = target.closest('.dropdown');
 
@@ -131,6 +134,9 @@ leftMenu.addEventListener('click', (event) => {
 
 // Open modal
 tvShowsList.addEventListener('click', (event) => {
+
+  event.preventDefault();
+
   const {target} = event;
   const card = target.closest('.tv-card');
 
@@ -139,13 +145,13 @@ tvShowsList.addEventListener('click', (event) => {
     new DBService().getTVShow(card.id)
       .then(data => {
 
-        const { poster_path, name: title,  genres, vote_average, overview, homepage} = data;
+        const { poster_path, name: title,  genres, vote_average, overview, homepage } = data;
 
         tvCardImg.src = IMG_URL + poster_path;
         modalTitle.textContent = title; // без .textContent ошибка, поэтому тут обязательно
 
         genresList.innerHTML = genres.reduce((acc, item) => `${acc} <li>${item.name}</li>`, ''); // возвращаем жанры через метод
-        
+
         rating.textContent = vote_average;
         description.textContent = overview;
         modalLink.href = homepage;
