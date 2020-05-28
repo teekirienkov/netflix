@@ -15,6 +15,10 @@ const leftMenu = document.querySelector('.left-menu'),
       searchForm = document.querySelector('.search__form'),
       searchInput = document.querySelector('.search__form-input'),
 
+      preloader = document.querySelector('.preloader'),
+
+      dropdown = document.querySelectorAll('.dropdown'),
+
       IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
 
 const loading = document.createElement('div');
@@ -58,7 +62,7 @@ const renderCard = (response) => {
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
 
-  response.results.forEach(item => {
+  response.results.forEach((item) => {
     const { backdrop_path, name: title, poster_path, vote_average, id } = item;
 
     // переменные с проверкой на наличие постера, бэкдропа и рейтинга
@@ -99,11 +103,17 @@ searchForm.addEventListener('submit', (event) => {
 });
 
 
-
 // Открытие меню по кнопке
+const closeDropdown = () => {
+  dropdown.forEach((item) => {
+    item.classList.remove('active'); // скрытие развернутых элементов в меню при закрытии
+  })
+}
+
 hamburger.addEventListener('click', () => {
   leftMenu.classList.toggle('openMenu');
   hamburger.classList.toggle('open');
+  closeDropdown();
 });
 
 // Закрытие меню по клику в любую область страницы
@@ -112,6 +122,7 @@ document.addEventListener('click', (event) => {
   if (!event.target.closest('.left-menu')) {
     leftMenu.classList.remove('openMenu');
     hamburger.classList.remove('open');
+    closeDropdown();
   }
 });
 
@@ -143,7 +154,7 @@ tvShowsList.addEventListener('click', (event) => {
   if (card) {
 
     new DBService().getTVShow(card.id)
-      .then(data => {
+      .then((data) => {
 
         const { poster_path, name: title,  genres, vote_average, overview, homepage } = data;
 
@@ -159,6 +170,9 @@ tvShowsList.addEventListener('click', (event) => {
       .then(() => {
         document.body.style.overflow = 'hidden';        // этот участок перенес, он был после первого then
         modal.classList.remove('hide');
+      })
+      .then(() => {
+        preloader.style.display = '';
       })
   }
 });
