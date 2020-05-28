@@ -1,10 +1,9 @@
 const leftMenu = document.querySelector('.left-menu'),
       hamburger = document.querySelector('.hamburger'),
       modal = document.querySelector('.modal'),
+
       tvShowsList = document.querySelector('.tv-shows__list'),
-
       tvShowsSection = document.querySelector('.tv-shows'),
-
       tvShowsHead = document.querySelector('.tv-shows__head'),
 
       tvCardImg = document.querySelector('.tv-card__img'),
@@ -77,8 +76,6 @@ class DBService {
   }
 }
 
-console.log(new DBService().getSearchResult('Папа'));
-
 const renderCard = (response, target) => {
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
@@ -86,6 +83,7 @@ const renderCard = (response, target) => {
   if (!response.total_results) {
     loading.remove();
     tvShowsHead.textContent = 'К сожалению по Вашему запросу ничего не найдено';
+    return;
   }
 
   tvShowsHead.textContent = target ? target.textContent : 'Результат поиска';
@@ -168,6 +166,11 @@ leftMenu.addEventListener('click', (event) => {
 
     leftMenu.classList.add('openMenu');
     hamburger.classList.add('open');
+  }
+
+  if (target.closest('#search')) { // клик по поиску в меню
+    tvShowsList.textContent = '';
+    tvShowsHead.textContent = '';
   }
 
   if (target.closest('#top-rated')) {
