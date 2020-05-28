@@ -5,6 +5,8 @@ const leftMenu = document.querySelector('.left-menu'),
 
       tvShowsSection = document.querySelector('.tv-shows'),
 
+      tvShowsHead = document.querySelector('.tv-shows__head'),
+
       tvCardImg = document.querySelector('.tv-card__img'),
       modalTitle = document.querySelector('.modal__title'),
       genresList = document.querySelector('.genres-list'),
@@ -18,6 +20,9 @@ const leftMenu = document.querySelector('.left-menu'),
       preloader = document.querySelector('.preloader'),
 
       dropdown = document.querySelectorAll('.dropdown'),
+
+      posterWrapper = document.querySelector('.poster__wrapper'),
+      modalContent = document.querySelector('.modal__content'),
 
       IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
 
@@ -61,6 +66,11 @@ console.log(new DBService().getSearchResult('Папа'));
 const renderCard = (response) => {
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
+
+  if (!response.total_results) {
+    loading.remove();
+    tvShowsHead.textContent = 'К сожалению по Вашему запросу ничего не найдено';
+  }
 
   response.results.forEach((item) => {
     const { backdrop_path, name: title, poster_path, vote_average, id } = item;
@@ -131,7 +141,7 @@ leftMenu.addEventListener('click', (event) => {
 
   event.preventDefault();
   
-  const {target} = event;
+  const { target } = event;
   const dropdown = target.closest('.dropdown');
 
   // Добавляем класс active, который открывает выпадающий список
@@ -148,7 +158,7 @@ tvShowsList.addEventListener('click', (event) => {
 
   event.preventDefault();
 
-  const {target} = event;
+  const { target } = event;
   const card = target.closest('.tv-card');
 
   if (card) {
@@ -158,7 +168,16 @@ tvShowsList.addEventListener('click', (event) => {
 
         const { poster_path, name: title,  genres, vote_average, overview, homepage } = data;
 
-        tvCardImg.src = IMG_URL + poster_path;
+        if (poster_path) {
+          tvCardImg.src = IMG_URL + poster_path;
+          tvCardImg.alt = title;
+          posterWrapper.style.display = '';
+          modalContent.style.paddingLeft = '';
+        } else {
+          posterWrapper.style.display = 'none';
+          modalContent.style.paddingLeft = '25px';
+        }
+        
         modalTitle.textContent = title; // без .textContent ошибка, поэтому тут обязательно
 
         genresList.innerHTML = genres.reduce((acc, item) => `${acc} <li>${item.name}</li>`, ''); // возвращаем жанры через метод
@@ -171,7 +190,7 @@ tvShowsList.addEventListener('click', (event) => {
         document.body.style.overflow = 'hidden';        // этот участок перенес, он был после первого then
         modal.classList.remove('hide');
       })
-      .then(() => {
+      .finally(() => {
         preloader.style.display = '';
       })
   }
