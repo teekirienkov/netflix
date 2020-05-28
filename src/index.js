@@ -59,11 +59,27 @@ class DBService {
   getTVShow = (id) => {
     return this.getData(`${this.SERVER}/tv/${id}?api_key=${this.API_KEY}&language=ru-RU`) // 
   }
+
+  getTopRated = () => {
+    return this.getData(`${this.SERVER}/tv/top_rated?api_key=${this.API_KEY}&language=ru-RU&page=1`)
+  }
+
+  getPopular = () => {
+    return this.getData(`${this.SERVER}/tv/popular?api_key=${this.API_KEY}&language=ru-RU&page=1`)
+  }
+
+  getToday = () => {
+    return this.getData(`${this.SERVER}/tv/airing_today?api_key=${this.API_KEY}&language=ru-RU&page=1`)
+  }
+
+  getOnTheAirWeek = () => {
+    return this.getData(`${this.SERVER}/tv/on_the_air?api_key=${this.API_KEY}&language=ru-RU&page=1`)
+  }
 }
 
 console.log(new DBService().getSearchResult('Папа'));
 
-const renderCard = (response) => {
+const renderCard = (response, target) => {
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
 
@@ -71,6 +87,8 @@ const renderCard = (response) => {
     loading.remove();
     tvShowsHead.textContent = 'К сожалению по Вашему запросу ничего не найдено';
   }
+
+  tvShowsHead.textContent = target ? target.textContent : 'Результат поиска';
 
   response.results.forEach((item) => {
     const { backdrop_path, name: title, poster_path, vote_average, id } = item;
@@ -142,7 +160,7 @@ leftMenu.addEventListener('click', (event) => {
   event.preventDefault();
   
   const { target } = event;
-  const dropdown = target.closest('.dropdown');
+  const dropdown = target.closest('.dropdown'); // ищем клик по открывающемся списку
 
   // Добавляем класс active, который открывает выпадающий список
   if (dropdown) {
@@ -150,6 +168,26 @@ leftMenu.addEventListener('click', (event) => {
 
     leftMenu.classList.add('openMenu');
     hamburger.classList.add('open');
+  }
+
+  if (target.closest('#top-rated')) {
+    new DBService().getTopRated()
+      .then((response) => renderCard(response, target));
+  }
+
+  if (target.closest('#popular')) {
+    new DBService().getPopular()
+      .then((response) => renderCard(response, target));
+  }
+
+  if (target.closest('#week')) {
+    new DBService().getOnTheAirWeek()
+      .then((response) => renderCard(response, target));
+  }
+
+  if (target.closest('#today')) {
+    new DBService().getToday()
+      .then((response) => renderCard(response, target));
   }
 });
 
