@@ -23,6 +23,8 @@ const leftMenu = document.querySelector('.left-menu'),
       posterWrapper = document.querySelector('.poster__wrapper'),
       modalContent = document.querySelector('.modal__content'),
 
+      pagination = document.querySelector('.pagination'),
+
       IMG_URL = 'https://image.tmdb.org/t/p/w185_and_h278_bestv2';
 
 const loading = document.createElement('div');
@@ -52,7 +54,12 @@ class DBService {
   }
 
   getSearchResult = (query) => {
-    return this.getData(`${this.SERVER}/search/tv?api_key=${this.API_KEY}&query=${query}&language=ru`) // ПОИСК
+    this.temp = `${this.SERVER}/search/tv?api_key=${this.API_KEY}&query=${query}&language=ru`;
+    return this.getData(this.temp) // ПОИСК
+  }
+
+  getNextPage = (page) => {
+    return this.getData(`${this.temp}&page=${page}`) // pagination method
   }
 
   getTVShow = (id) => {
@@ -79,6 +86,7 @@ class DBService {
 const renderCard = (response, target) => {
 
   tvShowsList.textContent = ''; // чищем весь список ul с карточками перед рендером
+  pagination.textContent = ''; // чищем пагинацию
 
   if (!response.total_results) {
     loading.remove();
@@ -114,7 +122,26 @@ const renderCard = (response, target) => {
     loading.remove();
     tvShowsList.append(card); // новый метод вместо apendChild, вставляет в конец tvShowsList
   })
+
+  // Пагинация
+
+  const { total_pages: pages } = response;
+
+  if (pages > 1) {
+    for (let i = 1; i <= pages; i++) {
+      pagination.innerHTML += `<li><a href="#" class="pages">${i}</a></li>`
+    }
+  }
 }
+
+pagination.addEventListener('click', (event) => {
+  event.preventDefault();
+  const { target } = event;
+  if (target.classList.contains('pages')) { // проверяем клик по li (по нумерации страниц)
+    new DBService().getNextPage(target.textContent) // передаем номер страницы
+      .then(renderCard)
+  }
+})
 
 searchForm.addEventListener('submit', (event) => {
   tvShowsSection.append(loading);
