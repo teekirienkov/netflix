@@ -290,5 +290,14 @@ const changeImage = (event) => {
   }
 };
 
+// default render
+document.addEventListener('DOMContentLoaded', () => {
+  new DBService().getPopular()
+    .then((response) => renderCard(response))
+    .then(() => {
+      tvShowsHead.textContent = 'Популярное'
+    });
+})
+
 tvShowsList.addEventListener('mouseover', changeImage);
 tvShowsList.addEventListener('mouseout', changeImage);
