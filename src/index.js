@@ -30,6 +30,8 @@ const leftMenu = document.querySelector('.left-menu'),
 const loading = document.createElement('div');
 loading.classList.add('loading');
 
+let saveTemp;
+
 class DBService {
   constructor() {
     this.API_KEY = '9c464a059d368b1b6fa45ea91caad68b';
@@ -55,11 +57,12 @@ class DBService {
 
   getSearchResult = (query) => {
     this.temp = `${this.SERVER}/search/tv?api_key=${this.API_KEY}&query=${query}&language=ru`;
+    saveTemp = this.temp;
     return this.getData(this.temp) // ПОИСК
   }
 
   getNextPage = (page) => {
-    return this.getData(`${this.temp}&page=${page}`) // pagination method
+    return this.getData(`${saveTemp}&page=${page}`); // pagination method
   }
 
   getTVShow = (id) => {
@@ -138,6 +141,7 @@ pagination.addEventListener('click', (event) => {
   event.preventDefault();
   const { target } = event;
   if (target.classList.contains('pages')) { // проверяем клик по li (по нумерации страниц)
+    tvShowsSection.append(loading);
     new DBService().getNextPage(target.textContent) // передаем номер страницы
       .then(renderCard)
   }
